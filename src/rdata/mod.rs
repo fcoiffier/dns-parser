@@ -25,6 +25,14 @@ pub mod soa;
 pub mod srv;
 pub mod txt;
 pub mod wks;
+pub mod ds;
+pub mod nimloc;
+pub mod naptr;
+pub mod a6;
+pub mod spf;
+pub mod uri;
+pub mod avc;
+pub mod doa;
 
 use {Type, Error};
 

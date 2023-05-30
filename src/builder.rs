@@ -53,7 +53,7 @@ impl Builder {
             panic!("Too late to add a question");
         }
         self.write_name(qname);
-        self.buf.write_u16::<BigEndian>(qtype as u16).unwrap();
+        self.buf.write_u16::<BigEndian>(qtype.into()).unwrap();
         let prefer_unicast: u16 = if prefer_unicast { 0x8000 } else { 0x0000 };
         self.buf.write_u16::<BigEndian>(qclass as u16 | prefer_unicast).unwrap();
         let oldq = BigEndian::read_u16(&self.buf[4..6]);
