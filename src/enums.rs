@@ -51,6 +51,7 @@ pub enum Type {
 ///
 /// All "EXPERIMENTAL" markers here are from the RFC
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[repr(isize)]
 #[cfg_attr(feature = "with-serde", derive(Serialize, Deserialize))]
 pub enum QueryType {
     /// a host addresss
@@ -95,6 +96,24 @@ pub enum QueryType {
     MAILA = maila::Record::TYPE,
     /// A request for all records
     All = all::Record::TYPE,
+    /// Delegation Signer
+    DS = ds::Record::TYPE,
+    /// Nimrod Locator
+    NIMLOC = nimloc::Record::TYPE,
+    /// Naming Authority Pointer
+    NAPTR = naptr::Record::TYPE,
+    /// A6 (OBSOLETE - use AAAA)
+    A6 = a6::Record::TYPE,
+    /// SPF
+    SPF = spf::Record::TYPE,
+    /// URI
+    URI = uri::Record::TYPE,
+    /// Application Visibility and Control
+    AVC = avc::Record::TYPE,
+    /// Digital Object Architecture
+    DOA = doa::Record::TYPE,
+    /// Other values
+    Other(isize)
 }
 
 
@@ -235,7 +254,30 @@ impl QueryType {
             mailb::Record::TYPE     => Ok(MAILB),
             maila::Record::TYPE     => Ok(MAILA),
             all::Record::TYPE       => Ok(All),
-            x               => Err(Error::InvalidQueryType(x as u16)),
+
+            ds::Record::TYPE        => Ok(DS),
+            nimloc::Record::TYPE    => Ok(NIMLOC),
+            naptr::Record::TYPE     => Ok(NAPTR),
+            a6::Record::TYPE        => Ok(A6),
+            spf::Record::TYPE       => Ok(SPF),
+            uri::Record::TYPE       => Ok(URI),
+            avc::Record::TYPE       => Ok(AVC),
+            doa::Record::TYPE       => Ok(DOA),
+            x                => Ok(Other(x))
+        }
+    }
+
+
+}
+
+
+impl Into<u16> for QueryType {
+    fn into(self) -> u16 {
+        // use self::ResponseCode::*;
+        use QueryType::Other;
+        match self {
+            Other(code)  => code as u16,
+            _ => unsafe { *<*const _>::from(&self).cast::<u16>() }
         }
     }
 }
